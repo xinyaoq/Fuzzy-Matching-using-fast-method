@@ -10,9 +10,13 @@ The primary objective is to:
 
 ## Features
 **Fuzzy Matching**: Uses rapidfuzz for efficient string similarity calculations.  
-**Multiprocessing**: Leverages multiple CPU cores for parallel processing.
+**Multiprocessing**: Leverages multiple CPU cores for parallel processing.  
+**Shared Memory**: Utilizes multiprocessing.shared_memory to minimize data duplication across processes.  
+**Batch Processing**: Handles large datasets efficiently by processing them in chunks.  
 
-**Shared Memory**: Utilizes multiprocessing.shared_memory to minimize data duplication across processes.
+1. Install libraries  
+```bash
+pip install pandas numpy rapidfuzz tqdm
 
-**Batch Processing**: Handles large datasets efficiently by processing them in chunks.
+2. Standardize company's name
 
