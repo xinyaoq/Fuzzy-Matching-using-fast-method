@@ -7,3 +7,10 @@ The primary objective is to:
 1. Standardize organization names for better matching.
 2. Match names from two datasets based on similarity.
 3. Merge and output the results in a structured format.
+
+## Features
+Fuzzy Matching: Uses rapidfuzz for efficient string similarity calculations.
+Multiprocessing: Leverages multiple CPU cores for parallel processing.
+Shared Memory: Utilizes multiprocessing.shared_memory to minimize data duplication across processes.
+Batch Processing: Handles large datasets efficiently by processing them in chunks.
+
