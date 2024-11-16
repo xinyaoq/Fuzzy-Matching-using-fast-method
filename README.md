@@ -9,8 +9,7 @@ The primary objective is to:
 3. Merge and output the results in a structured format.
 
 ## Features
-**Fuzzy Matching**: Uses rapidfuzz for efficient string similarity calculations.
-
+**Fuzzy Matching**: Uses rapidfuzz for efficient string similarity calculations.  
 **Multiprocessing**: Leverages multiple CPU cores for parallel processing.
 
 **Shared Memory**: Utilizes multiprocessing.shared_memory to minimize data duplication across processes.
