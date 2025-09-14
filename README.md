@@ -66,57 +66,6 @@ def process_single_batch(batch, patent_stdlist_shm_name, patent_stdlist_shape, p
 ```
 **5. Main**  
 The script processes large datasets by dividing them into smaller batches. This approach minimizes memory usage and allows for efficient parallel processing using Python's multiprocessing module.
-```bash
-def main():
-  output_file = "final_patent_patent_pitchbook.csv"
-  batch_size = 100  # you can change this batch size based on your specific question
-  num_processes = mp.cpu_count() - 1  # Use all but one core 
 
-  # Load and standardize datasets
-  patent = pd.read_csv('unique_patent_with_uniqueid.csv')
-  pitchbook = pd.read_csv('pitchbook_withstdname.csv')
-  
-  # Standardize organization names
-  patent['disambig_assignee_organization_std'] = patent['disambig_assignee_organization'].apply(standardize_text)
-  max_length = patent['disambig_assignee_organization_std'].str.len().max()
-  dtype_str = f'U{max_length}'
-  patent_stdlist = np.array(patent['disambig_assignee_organization_std'].tolist(), dtype=dtype_str)  
-
-  # Shared memory setup for patent_stdlist
-  patent_stdlist_shm = shared_memory.SharedMemory(create=True, size=patent_stdlist.nbytes)
-  shm_array = np.ndarray(patent_stdlist.shape, dtype=patent_stdlist.dtype, buffer=patent_stdlist_shm.buf)
-  shm_array[:] = patent_stdlist[:]
-
-  # Create batches
-  batches = [pitchbook[i:i + batch_size].to_dict(orient='records') for i in range(0, len(pitchbook), batch_size)]
-  pitchbook_columns = pitchbook.columns.tolist()
-
-  header_written = False
-  buffer = io.StringIO()  # In-memory buffer to batch write results
-
-  # Process batches in parallel
-  with mp.Pool(num_processes) as pool:
-      for batch_result in tqdm(pool.starmap(process_single_batch, [
-          (batch, patent_stdlist_shm.name, patent_stdlist.shape, patent, pitchbook_columns, dtype_str) for batch in batches
-      ])):
-          batch_result.to_csv(buffer, mode='a', index=False, header=not header_written)
-          header_written = True  # Only write header once
-
-          # Periodically flush buffer to file to reduce I/O frequency
-          if buffer.tell() > 10_000_000:  # Flush every ~10MB of data
-              with open(output_file, 'a') as f:
-                  f.write(buffer.getvalue())
-              buffer.seek(0)
-              buffer.truncate(0)
-
-  # Final buffer flush
-  if buffer.tell() > 0:
-      with open(output_file, 'a') as f:
-          f.write(buffer.getvalue())
-
-  # Cleanup shared memory
-  patent_stdlist_shm.close()
-  patent_stdlist_shm.unlink()  # Unlink to release memory
-```
  
 
